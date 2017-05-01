@@ -175,11 +175,11 @@ class ChatManager:
                         if participant != self.user_name:
                             participants.append(participant)
                     return participants
-                    
+
         else:
             print "Please log in before accessing Your conversations"
             state = INIT
-        
+
 
     def get_my_conversations(self):
         '''
@@ -320,6 +320,7 @@ class ChatManager:
                     state = INIT
                 elif state == SELECT_CONVERSATION:
                     # User wants to enter a conversation
+                    c_id = None
                     try:
                         # Read the conversation ID supplied by the user
                         conversation_id = raw_input("Which conversation do you wish to join? ")
