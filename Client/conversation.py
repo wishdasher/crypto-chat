@@ -2,6 +2,9 @@ from message import Message
 import base64
 from time import sleep
 from threading import Thread
+from Crypto.Cipher import AES
+from Crypto import Random
+from base64 import b64encode
 
 class Conversation:
     '''
@@ -27,6 +30,7 @@ class Conversation:
         ) # message processing loop
         self.msg_process_loop.start()
         self.msg_process_loop_started = True
+        self.KEY = b'0123456789abcdef0123456789abcdef'
 
     def append_msg_to_process(self, msg_json):
         '''
@@ -106,7 +110,7 @@ class Conversation:
         # you can do that with self.process_outgoing_message("...") or whatever you may want to send here...
 
         # Since there is no crypto in the current version, no preparation is needed, so do nothing
-        # replace this with anything needed for your key exchange 
+        # replace this with anything needed for your key exchange
         pass
 
 
@@ -125,9 +129,15 @@ class Conversation:
 		# example is base64 decoding, extend this with any crypto processing of your protocol
         decoded_msg = base64.decodestring(msg_raw)
 
+        iv = decoded_msg[0:AES.block_size]
+        enc_msg = decoded_msg[AES.block_size:]
+        cipher = AES.new(self.KEY, AES.MODE_CBC, iv)
+        dec_msg = cipher.decrypt(enc_msg)
+        dec_msg = depad_TLS(dec_msg)
+
         # print message and add it to the list of printed messages
         self.print_message(
-            msg_raw=decoded_msg,
+            msg_raw=dec_msg,
             owner_str=owner_str
         )
 
@@ -139,8 +149,14 @@ class Conversation:
         :return: message to be sent to the server
         '''
 
+        msg_padded = pad_TLS(AES.block_size, msg_raw)
+        iv = Random.new().read(AES.block_size)
+        cipher = AES.new(self.KEY, AES.MODE_CBC, iv)
+        msg_formatted = iv + cipher.encrypt(msg_padded)
+
+
         # if the message has been typed into the console, record it, so it is never printed again during chatting
-        if originates_from_console == True:
+        if originates_from_console:
             # message is already seen on the console
             m = Message(
                 owner_name=self.manager.user_name,
@@ -150,7 +166,7 @@ class Conversation:
 
         # process outgoing message here
 		# example is base64 encoding, extend this with any crypto processing of your protocol
-        encoded_msg = base64.encodestring(msg_raw)
+        encoded_msg = base64.encodestring(msg_formatted)
 
         # post the message to the conversation
         self.manager.post_message_to_conversation(encoded_msg)
@@ -193,3 +209,29 @@ class Conversation:
         :return: number
         '''
         return len(self.all_messages)
+
+
+TYPE_HELLO = 0
+TYPE_DH_INIT = 1
+TYPE_DH_RES = 2
+TYPE_DH_FINAL = 3
+TYPE_MESSAGE = 4
+NAME_LEN = 32
+
+def format_message(msg_type, sender, receiver, content):
+    message = str(msg_type) + pad_TLS(NAME_LEN, sender) + pad_TLS(NAME_LEN, receiver) + content
+    return message
+
+def unformat_message(message):
+    msg_type = int(message[0:1])
+    sender = depad_TLS(message[1:NAME_LEN+1])
+    receiver = depad_TLS(message[NAME_LEN+1:NAME_LEN*2+1])
+    content = message[NAME_LEN*2+1:]
+    return (msg_type, sender, receiver, content)
+
+def pad_TLS(length, raw):
+    plength = length - (len(raw) % length)
+    return raw + chr(plength) * plength
+
+def depad_TLS(padded):
+    return padded[:len(padded)-ord(padded[-1])]
