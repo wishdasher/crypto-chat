@@ -5,6 +5,14 @@ from threading import Thread
 from Crypto.Cipher import AES
 from Crypto import Random
 from base64 import b64encode
+from Crypto.Signature import PKCS1_PSS
+from Crypto.Hash import SHA
+
+TYPE_HELLO = 0
+TYPE_SEND_KEY = 1
+TYPE_MESSAGE = 2
+NAME_LEN = 32
+SIG_LEN = 128
 
 class Conversation:
     '''
@@ -117,6 +125,7 @@ class Conversation:
         '''
         Called by everyone when they enter the conversation
         '''
+        pass
 
 
 
@@ -216,24 +225,21 @@ class Conversation:
         '''
         return len(self.all_messages)
 
+    def format_and_sign_message(self, msg_type, sender, receiver, content, rsa_private):
+        h = SHA.new()
+        h.update(content)
+        signer = PKCS1_PSS.new(rsa_private)
+        signature = signer.sign(h)
+        message = str(msg_type) + pad_TLS(NAME_LEN, sender) + pad_TLS(NAME_LEN, receiver) + content + signature
+        return message
 
-TYPE_HELLO = 0
-TYPE_DH_INIT = 1
-TYPE_DH_RES = 2
-TYPE_DH_FINAL = 3
-TYPE_MESSAGE = 4
-NAME_LEN = 32
-
-def format_message(msg_type, sender, receiver, content):
-    message = str(msg_type) + pad_TLS(NAME_LEN, sender) + pad_TLS(NAME_LEN, receiver) + content
-    return message
-
-def unformat_message(message):
-    msg_type = int(message[0:1])
-    sender = depad_TLS(message[1:NAME_LEN+1])
-    receiver = depad_TLS(message[NAME_LEN+1:NAME_LEN*2+1])
-    content = message[NAME_LEN*2+1:]
-    return (msg_type, sender, receiver, content)
+    def unformat_message(self, message):
+        msg_type = int(message[0:1])
+        sender = depad_TLS(message[1:NAME_LEN+1])
+        receiver = depad_TLS(message[NAME_LEN+1:NAME_LEN*2+1])
+        content = message[NAME_LEN*2+1:len(message)-SIG_LEN]
+        signature = message[len(message)-SIG_LEN]
+        return (msg_type, sender, receiver, content, signature)
 
 def pad_TLS(length, raw):
     plength = length - (len(raw) % length)
