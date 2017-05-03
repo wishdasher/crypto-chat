@@ -1,4 +1,5 @@
 {
     "user_name" : "Steve",
-    "password"  : "Jobs"
+    "password"  : "Jobs",
+    "RSA_private" : "-----BEGIN RSA PRIVATE KEY-----MIICXAIBAAKBgQDHt/I+gm4BTPfQ6RvlFK/8UZJwVWa3tsaSAOZ5Iflk5/ZEUA4l7Axh0wmJNapUiSO1L24XXLuBc9YrN1rYG4c/eXK9KR713OMXmigMikm35hL/c92Za4HOROWznURUxq2TfhfvH3eioRCeScgxl/MMWw/p9hnWyRtUi4F582+lnQIDAQABAoGBAJc6YVMV/mg7uNbW/Mlc/dlohyNKd4oa+4do6RvGLwtKXf7iQ6RRdhrI60qbeUujwIcc0Bcen9jpNr3on4BOb/y4Tut5sFw/Mrpe1S2rX8IH63Osfdkz7fkT9I42DrJj1AlwmkYlhMOMeAMM7CVEhWFbufJMXhRiJeQ0Nk+PRHQdAkEA1MZlDkOlkw8kuHIyJ2xXlMi7qTangYD/0aB9+lwujq0JrVS/PaNVlmmA2oWof8k+3qDBxlMuD+gLObg2hygUcwJBAPBKiVi8bHj7z+sYqknzg+dihefaT8cP+7fYwex8VzaaFdrqjeZ88X6KNUnqRkaNUyMJpjjdGcURrk4yv9uf6a8CQA7MVY7uaX+W2Ajz+EUBpf21EEguguvg2unrbZeR/bLyme+yKzLQP02cvNd14Egy6Op258MxWczFaLJ0+2XfBb0CQA9oGApSenn/W0Ntn22CaZCqZn+JJdhTlAYjpbtt9YGQu5n/s/11QV6lqekFVmArq4rxkXDP7FkQWya0ZkzEog0CQEiR69iIKcHAc7w08pPEKYaewiQfC1gsU0LZNRo8rGwWfeIxl2oUbeh4Uj/6IttfO/bVkyoaoNYZ1HmcAoXImtM=-----END RSA PRIVATE KEY-----"
 }

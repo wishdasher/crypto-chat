@@ -1,4 +1,5 @@
 {
-    "user_name" : "Bill",
-    "password"  : "Gates"
+    "user_name"   : "Bill",
+    "password"    : "Gates",
+    "RSA_private" : "-----BEGIN RSA PRIVATE KEY-----MIICXQIBAAKBgQCjsQyWyeAW8prSGcBwvD5wLi68CzQlzOffnFvCbRYXHzb7JNVhb7gL2O3MjnsEi41rQbqimx+rsYmhLnNAXUm8ai5cepEjqT9HIVgUeGZcaT2GJTyFoZjKAjLfRU+jkXAlw3/30c+OWNQNfebu5HcVk5rG7xewQ1UlkpTaDK76ZwIDAQABAoGAf1uLPe7HiVMsnfcnQQ9VTRbBidD1u8tXRSV0Ryt0mnzQ3EnmMy8m9SDMs/DPSdQCLccwHL+wvncda+imBxgN+2ncqq5UTOCd6X3QGeB1yJ+abIPKyjxLkZI/TNwbqmKci7vRlumte4ExTpP3xh1p9P/4p4tB1sC2Sc/84OkiZVECQQDLR9C1Q38tp814S1iK7ZeO64D3rocqohMdP/wkMQA0DDNpzI7qo+b4Y6cXUachoPnJSRVJFu9lzrQaotU2i+3NAkEAziTZSzABQjuEfHLnmp0VHXXlk8cEi1F1ELQxzhYkDR3TzaPFoII7psiVNNE3OjIQSyOjMIjC3FrsD1paMk71AwJBAMCNMBbi7o7SigBObnp6f7szPKBgQ0yQ5UYpm660c5rZi8HFsAJ2aowR6O5fu85Q6wpNHcpz3SQ0Xcl1QD1A4mkCQQCLzMekSuj/ntdpgo949oCkWxkXkAeP5+0pJ9sC9Vb7ojfKpP9YrBmCMVOm3x/CEsOkAYYhWw4zXGHsw4yZw5w7AkBGNx+TUOBXYloVrgF/icXBMcD4q27oCF9VAgxKOWZnOimnLdpX8SDeHEetXa5CMtbSFENAfaHSAzd+www5Qhyk-----END RSA PRIVATE KEY-----"
 }
