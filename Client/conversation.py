@@ -203,16 +203,13 @@ class Conversation:
             print "Signature not valid"
             return
 
-        print sender
-        print receiver
-
         if msg_type == TYPE_KEY:
             key = RSA.importKey(self.manager.RSA_private)
             cipher = PKCS1_OAEP.new(key)
             self.secret_key = cipher.decrypt(content)
         else:
-            iv = decoded_msg[0:AES.block_size]
-            enc_msg = decoded_msg[AES.block_size:]
+            iv = content[0:AES.block_size]
+            enc_msg = content[AES.block_size:]
             cipher = AES.new(self.secret_key, AES.MODE_CBC, iv)
             dec_msg = cipher.decrypt(enc_msg)
             dec_msg = depad_TLS(dec_msg)
