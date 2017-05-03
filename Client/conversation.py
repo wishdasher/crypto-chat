@@ -143,7 +143,7 @@ class Conversation:
             cipher = PKCS1_OAEP.new(pubkey)
             key    = RSA.importKey(publicRSAs[u])
             msg    = cipher.encrypt(self.secret_key)
-            msg    = self.format_and_sign_message(TYPE_KEY, self.manager.user_name, u, msg)
+            msg    = self.format_and_sign_message(TYPE_KEY, self.manager.user_name.encode('utf-8'), u.encode('utf-8'), msg)
             self.manager.post_message_to_conversation(base64.encodestring(msg))
 
     def enter_conversation(self):
@@ -191,9 +191,11 @@ class Conversation:
         msg_type, sender, receiver, content, signature = self.unformat_message(decoded_msg)
 
         if receiver != self.manager.user_name and receiver != ALL:
+            print "OH NO I'M NOT THE RECEIVER"
             return
 
         if not self.check_signature(content, sender, signature):
+            print "OH NO SIGNATURE CHECK FAILED"
             return
 
         if msg_type == TYPE_KEY:
@@ -286,7 +288,8 @@ class Conversation:
     def format_and_sign_message(self, msg_type, sender, receiver, content):
         h = SHA.new()
         h.update(content)
-        signer = PKCS1_PSS.new(self.manager.RSA_private)
+        key = RSA.importKey(self.manager.RSA_private)
+        signer = PKCS1_PSS.new(key)
         signature = signer.sign(h)
         message = str(msg_type) + pad_TLS(NAME_LEN, sender) + pad_TLS(NAME_LEN, receiver) + content + signature
         return message
