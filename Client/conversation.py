@@ -129,7 +129,10 @@ class Conversation:
 
         # self.secret_key = Random
 
+        self.secret_key = b'abcdef01234567890123456789abcdef'
+
         users = self.manager.get_other_users()
+
 
         RSA_public_keys = open('users_public_RSA.json', 'rb')
         publicRSAs = json.load(RSA_public_keys)
