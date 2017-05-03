@@ -1,4 +1,5 @@
 {
-    "user_name" : "Sofi",
-    "password"  : "avocado"
+    "user_name"   : "Sofi",
+    "password"    : "avocado",
+    "RSA_private" : "-----BEGIN RSA PRIVATE KEY-----MIICWwIBAAKBgQCS7uDj+8/a+YH4iFRJ2i+sF6mBBnzDH3px9HvtnetzjuwZqyvlYy2fOhnGSL01XcC6gLG5ie7EA/gYPZGYUKeAjWYZiSbY+paxPZ/LKCLDojZp6X7EfRx4Tsc5YMp+dP1VK0OU/KCPvcxMmP5qkf5i3VLLnRmVvt0ysaVWUbJkewIDAQABAoGAeVhmymHwKzvcJtEQK13R+SIhjrk42Dxq9ymeH4NILEtgmWJQAkWCK/njx2nTOPuQa3ZVUJGlaqSMhBh04YHakoOtVdn3rCil/XUCvKL8vLDWHhHdaTfJuaJ09uVHDesz+GfglfNfO/mdwf3DoJOWetTl8pSTp5NPxONuaqG+o+ECQQC7iajYEbHh4//Ug4r/UkYJgpGJyJ1VCNIKcYm6QwLORe6q+bQ3NVy7cN2T6lldH2Dcw7SOQKbnNnFAUpVBbrA3AkEAyJKDsLJwhYgm59A+PYswn9wXml1PrS45hEU4QftP5gzOETnwavV8L5XllzlYtQR512LqW7Aam637YMWfq3lj3QJAaXuOaqnZQdM6TFAI2H9wQV0de0BJrlCdw54E961FYLxY9/YndX4gQJXFK7N+vDAwDTxOzEx1FEu8+473wKv/lQJABe/wXgaqNgm1vR74+LFqGxFU0Yj5ltLLeRLje3CJCPJQF0pzx3bE2lPBnBxid9lOEgYnkddAsmMQEelHtLe/MQJABmxTpb2i5k13J5YAWEbYUcyxklFkRmXdLVAsJJFsyVJdCCZCm9gURl+1Lcm8h/MYi2qwfYO9PxC8HbPvTWo2Xg==-----END RSA PRIVATE KEY-----"
 }
