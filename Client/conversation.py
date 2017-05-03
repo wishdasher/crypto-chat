@@ -147,6 +147,8 @@ class Conversation:
         pass
 
 
+    def check_signature(content, sender):
+        
 
     def process_incoming_message(self, msg_raw, msg_id, owner_str):
         '''
@@ -167,6 +169,9 @@ class Conversation:
 
 
         if msg_type == TYPE_KEY:
+            if receiver == self.manager.user_name:
+                if checkSignature(content, sender): 
+
             pass
         else:
             iv = decoded_msg[0:AES.block_size]
