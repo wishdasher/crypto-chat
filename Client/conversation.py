@@ -4,6 +4,7 @@ from time import sleep
 from threading import Thread
 from Crypto.Cipher import AES
 from Crypto.Signature import PKCS1_OAEP
+from Crypto.Signature import PKCS1_PSS
 from Crypto.Hash import SHA
 from Crypto.PublicKey import RSA
 from Crypto import Random
@@ -131,6 +132,7 @@ class Conversation:
 
         RSA_public_keys = open('users_public_RSA.json', 'rb')
         publicRSAs = json.load(RSA_public_keys)
+        RSA_public_keys.close()
 
         for u in users:
             pubkey = RSA.importKey(publicRSAs[u])
@@ -147,8 +149,25 @@ class Conversation:
         pass
 
 
-    def check_signature(content, sender):
+    def check_signature(self, content, sender, signature):
+        '''
+        :param content: message that was signed
+        :param sender: sender of message. Look up their public key in file
+        :param signature: signature to verify
+        :return: bool
+        '''
 
+        h = SHA.new()
+        h.update(content)
+
+        key_file = open('users_public_RSA.json', 'rb')
+        public_keys = json.load(keyFile)
+        key_file.close()
+
+        p_key = RSA.importKey(publicKeys[sender])
+        verifier = PCKS1_PSS.new(p_key)
+
+        return verifier.verify(h, signature)
 
     def process_incoming_message(self, msg_raw, msg_id, owner_str):
         '''
