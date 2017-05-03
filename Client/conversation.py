@@ -3,6 +3,9 @@ import base64
 from time import sleep
 from threading import Thread
 from Crypto.Cipher import AES
+from Crypto.Signature import PKCS1_OAEP
+from Crypto.Hash import SHA
+from Crypto.PublicKey import RSA
 from Crypto import Random
 from base64 import b64encode
 
@@ -31,7 +34,7 @@ class Conversation:
         self.msg_process_loop.start()
         self.msg_process_loop_started = True
         self.KEY = b'0123456789abcdef0123456789abcdef'
-
+        self.secret_key = b''
     def append_msg_to_process(self, msg_json):
         '''
         Append a message to the list of all retrieved messages
@@ -111,6 +114,24 @@ class Conversation:
 
         # Since there is no crypto in the current version, no preparation is needed, so do nothing
         # replace this with anything needed for your key exchange
+
+
+        # self.secret_key = Random
+
+        users = chat_manager.get_other_users()
+
+        RSA_public_keys = open('users_public_RSA.json', 'rb')
+        publicRSAs = json.load(RSA_public_keys)
+
+        for u in users:
+
+            pubkey = RSA.importKey(publicRSAs[u])
+            cipher = PKCS1_OAEP.new(pubkey)
+            key    = RSA.importKey(publicRSAs[u])
+            msg    = cipher.encrypt(self.KEY)
+            msg    = format_message(TYPE_KEY, chat_manager.user_name, u, msg)
+            self.manager.post_message_to_conversation(base64.encodestring(msg))
+
         pass
 
     def enter_conversation(self):
@@ -217,11 +238,8 @@ class Conversation:
         return len(self.all_messages)
 
 
-TYPE_HELLO = 0
-TYPE_DH_INIT = 1
-TYPE_DH_RES = 2
-TYPE_DH_FINAL = 3
-TYPE_MESSAGE = 4
+TYPE_KEY = 0
+TYPE_MESSAGE = 1
 NAME_LEN = 32
 
 def format_message(msg_type, sender, receiver, content):

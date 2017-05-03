@@ -21,7 +21,7 @@ class ChatManager:
     '''
     Class responsible for driving the application
     '''
-    def __init__(self, user_name="", password=""):
+    def __init__(self, user_name="", password="", RSA_private=""):
         '''
         Constructor
         :param user_name: user name of the current user
@@ -37,6 +37,7 @@ class ChatManager:
         )  # thread, retrieves messages from the server
         self.user_name = user_name  # user name of the current user
         self.password = password  # password of the current user
+        self.RSA_private = RSA_private # private RSA key of the current user
         self.get_msgs_thread_started = False  # message retrieval has not been started
         self.conversations = {} # conversations that the user has entered in this session
 

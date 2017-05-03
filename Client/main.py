@@ -28,7 +28,8 @@ def main():
     try:
         # Initialize chat client with the provided credentials
         c = ChatManager(user_name=credentials["user_name"],
-                        password=credentials["password"])
+                        password=credentials["password"]
+                        RSA_private=credentials["RSA_private"])
     except KeyError:
         # In case the JSON file is malformed
         print "Unable to get user credentials from JSON file"
