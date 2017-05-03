@@ -13,6 +13,7 @@ import base64
 
 
 state = INIT  # initial state for the application
+new_id = -1
 has_requested_messages = False  # history of the next conversation will need to be downloaded and printed
 
 
@@ -90,6 +91,7 @@ class ChatManager:
         :return: None
         '''
         global state
+        global new_id
         # Allowed only, if user is logged in
         if self.is_logged_in:
             try:
@@ -129,6 +131,8 @@ class ChatManager:
                 "participants": json.dumps(participant_list)
             })
             print "Creating new conversation..."
+            # find existing conversations
+            original_conversations = self.get_my_conversations(False)
             try:
                 # Send conversation create request to the server (participants are POSTed)
                 req = urllib2.Request("http://" + SERVER + ":" + SERVER_PORT + "/conversations/create", data=data)
@@ -142,6 +146,14 @@ class ChatManager:
                 print "Unable to create conversation, reason:", e.message
                 return
             print "Conversation created"
+            new_conversations = self.get_my_conversations(False)
+            for c in new_conversations:
+                if c not in original_conversations:
+                    newly_created = c
+            if newly_created != None:
+                new_id = newly_created["conversation_id"]
+            else:
+                print "Cannot find new conversation, thus not entered"
         else:
             print "Please log in before creating new conversations"
             state = INIT
@@ -183,10 +195,10 @@ class ChatManager:
             state = INIT
 
 
-    def get_my_conversations(self):
+    def get_my_conversations(self, to_print):
         '''
         Retrieves all the conversations (their IDs and participant lists) that the current user is a participant of
-        :return: None
+        :return: the dictionary of conversations
         '''
         global state
         # Allowed only, if user is logged in
@@ -205,11 +217,13 @@ class ChatManager:
                 return
             conversations = json.loads(r.read())
             # Print conversations with IDs and participant lists
-            for c in conversations:
-                conversation_id = c["conversation_id"]
-                print "Conversation", conversation_id, "has the following members:"
-                for participant in c["participants"]:
-                    print "\t", participant
+            if to_print:
+                for c in conversations:
+                    conversation_id = c["conversation_id"]
+                    print "Conversation", conversation_id, "has the following members:"
+                    for participant in c["participants"]:
+                        print "\t", participant
+            return conversations
         else:
             print "Please log in before accessing Your conversations"
             state = INIT
@@ -305,6 +319,7 @@ class ChatManager:
         :return: None
         '''
         global state
+        global new_id
         self.login_user()
         # Allowed only if the current is logged in
         if self.is_logged_in == True:
@@ -319,13 +334,16 @@ class ChatManager:
                     # User wants to create a conversation
                     self.create_conversation()
                     # Creation finished, go back to the initial state
-                    state = INIT
+                    state = SELECT_CONVERSATION
                 elif state == SELECT_CONVERSATION:
                     # User wants to enter a conversation
                     c_id = None
                     try:
-                        # Read the conversation ID supplied by the user
-                        conversation_id = raw_input("Which conversation do you wish to join? ")
+                        if new_id != -1:
+                            conversation_id = str(new_id)
+                        else:
+                            # Read the conversation ID supplied by the user
+                            conversation_id = raw_input("Which conversation do you wish to join? ")
                         # Check whether the supplied ID is valid
                         req = urllib2.Request("http://" + SERVER + ":" + SERVER_PORT + "/conversations/" +
                                               conversation_id + "/")
@@ -404,7 +422,7 @@ class ChatManager:
         # Conversation was left, history of the next conversation will need to be downloaded again
         has_requested_messages = False
         # Get the conversations of the current user
-        self.get_my_conversations()
+        self.get_my_conversations(True)
         # Display the menu
         menu.display()
         selected_option = 0
