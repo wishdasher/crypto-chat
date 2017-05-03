@@ -39,7 +39,6 @@ class ChatManager:
         self.password = password  # password of the current user
         self.get_msgs_thread_started = False  # message retrieval has not been started
         self.conversations = {} # conversations that the user has entered in this session
-        self.convo_keys = {} # store keys for entered conversations in this session
 
     def login_user(self):
         '''
@@ -358,11 +357,11 @@ class ChatManager:
                         if c_id not in self.conversations.keys():
                             self.current_conversation = Conversation(c_id, self)
                             self.conversations[c_id] = self.current_conversation
-                            self.current_conversation.setup_conversation()
-                            # TODO store key here
+                            if new_id != 1:
+                                self.current_conversation.setup_conversation()
+                            self.current_conversation.enter_conversation()
                         else:
                             self.current_conversation = self.conversations[c_id]
-                            # TODO pass key to do something useful
                     except urllib2.HTTPError as e:
                         print "Unable to determine validity of conversation ID, server returned HTTP", e.code, e.msg
                         continue
@@ -376,6 +375,7 @@ class ChatManager:
                         continue
                     # Enter the conversation (message retrieval thread becomes active)
                     state = IN_CONVERSATION
+                    new_id = -1 # reset the new_id
                     # Read messages from the console
                     self.read_user_input()
                 elif state == STOP:

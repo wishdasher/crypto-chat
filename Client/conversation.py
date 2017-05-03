@@ -99,7 +99,7 @@ class Conversation:
 
     def setup_conversation(self):
         '''
-        Prepares the conversation for usage
+        Prepares the conversation for usage, only called by the initial conversation creator
         :return:
         '''
         # You can use this function to initiate your key exchange
@@ -112,6 +112,12 @@ class Conversation:
         # Since there is no crypto in the current version, no preparation is needed, so do nothing
         # replace this with anything needed for your key exchange
         pass
+
+    def enter_conversation(self):
+        '''
+        Called by everyone when they enter the conversation
+        '''
+
 
 
     def process_incoming_message(self, msg_raw, msg_id, owner_str):
