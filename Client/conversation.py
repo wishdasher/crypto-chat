@@ -131,7 +131,7 @@ class Conversation:
 
         # self.manager.post_message_to_conversation("hello")
 
-        print "Setting up conversation..."
+        print "* Generating key..."
 
         self.secret_key = b'abcdef01234567890123456789abcdef'
 
@@ -151,7 +151,7 @@ class Conversation:
 
             self.manager.post_message_to_conversation(base64.encodestring(msg), True)
 
-        print "Key sent to other users."
+        print "* Key sent to other users."
     def enter_conversation(self):
         '''
         Called by everyone when they enter the conversation
@@ -207,6 +207,7 @@ class Conversation:
             key = RSA.importKey(self.manager.RSA_private)
             cipher = PKCS1_OAEP.new(key)
             self.secret_key = cipher.decrypt(content)
+
         else:
             iv = content[0:AES.block_size]
             enc_msg = content[AES.block_size:]
