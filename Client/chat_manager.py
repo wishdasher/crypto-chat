@@ -268,7 +268,7 @@ class ChatManager:
         '''
         global has_requested_messages
 
-        if key_setup : 
+        if key_setup :
             has_requested_messages = True
 
         # While the conversation history is being retrieved, postpone message sending
@@ -363,7 +363,7 @@ class ChatManager:
                         if c_id not in self.conversations.keys():
                             self.current_conversation = Conversation(c_id, self)
                             self.conversations[c_id] = self.current_conversation
-                            if new_id != 1:
+                            if new_id != -1:
                                 self.current_conversation.setup_conversation()
                             self.current_conversation.enter_conversation()
                         else:

@@ -131,13 +131,11 @@ class Conversation:
 
         # self.manager.post_message_to_conversation("hello")
 
-        print "setting up convo..."
+        print "Setting up conversation..."
 
         self.secret_key = b'abcdef01234567890123456789abcdef'
 
         users = self.manager.get_other_users()
-
-        print "user list acquired. Acquiring public keys..."
 
         RSA_public_keys = open('users_public_RSA.json', 'rb')
         publicRSAs = json.load(RSA_public_keys)
@@ -150,7 +148,7 @@ class Conversation:
             key    = RSA.importKey(publicRSAs[u])
             msg    = cipher.encrypt(self.secret_key)
             msg    = self.format_and_sign_message(TYPE_KEY, self.manager.user_name.encode('utf-8'), u.encode('utf-8'), msg)
-            
+
             self.manager.post_message_to_conversation(base64.encodestring(msg), True)
 
         print "Key sent to other users."
@@ -177,7 +175,7 @@ class Conversation:
         key_file.close()
 
         p_key = RSA.importKey(public_keys[sender])
-        verifier = PCKS1_PSS.new(p_key)
+        verifier = PKCS1_PSS.new(p_key)
 
         return verifier.verify(h, signature)
 
@@ -199,11 +197,9 @@ class Conversation:
         msg_type, sender, receiver, content, signature = self.unformat_message(decoded_msg)
 
         if receiver != self.manager.user_name and receiver != ALL:
-            print "OH NO I'M NOT THE RECEIVER"
             return
 
         if not self.check_signature(content, sender, signature):
-            print "OH NO SIGNATURE CHECK FAILED"
             return
 
         if msg_type == TYPE_KEY:
@@ -246,7 +242,7 @@ class Conversation:
 
         # process outgoing message here
 		# example is base64 encoding, extend this with any crypto processing of your protocol
-        msg_formatted = self.format_and_sign_message(TYPE_MESSAGE, self.manager.user_name, ALL, msg_content)
+        msg_formatted = self.format_and_sign_message(TYPE_MESSAGE, self.manager.user_name.encode('utf-8'), ALL, msg_content)
         encoded_msg = base64.encodestring(msg_formatted)
 
         # post the message to the conversation
