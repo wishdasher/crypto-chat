@@ -196,17 +196,21 @@ class Conversation:
 
         msg_type, sender, receiver, content, signature = self.unformat_message(decoded_msg)
 
-        if receiver != self.manager.user_name and receiver != ALL:
+        if receiver != self.manager.user_name.encode('utf-8') and receiver != ALL:
             return
 
         if not self.check_signature(content, sender, signature):
+            print "Signature not valid"
             return
 
+        print sender
+        print receiver
+
         if msg_type == TYPE_KEY:
-            print "* Establishing key..."
-            cipher = PKCS1_OAEP.new(self.manager.RSA_private)
-            self.secret_key = cipher.decrypt(message)
-            print "* Key established."
+            key = RSA.importKey(self.manager.RSA_private)
+            cipher = PKCS1_OAEP.new(key)
+            self.secret_key = cipher.decrypt(content)
+
         else:
             iv = decoded_msg[0:AES.block_size]
             enc_msg = decoded_msg[AES.block_size:]
@@ -304,7 +308,7 @@ class Conversation:
         sender = depad_TLS(message[1:NAME_LEN+1])
         receiver = depad_TLS(message[NAME_LEN+1:NAME_LEN*2+1])
         content = message[NAME_LEN*2+1:len(message)-SIG_LEN]
-        signature = message[len(message)-SIG_LEN]
+        signature = message[len(message)-SIG_LEN:]
         return (msg_type, sender, receiver, content, signature)
 
 
