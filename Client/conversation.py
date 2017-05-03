@@ -3,7 +3,7 @@ import base64
 from time import sleep
 from threading import Thread
 from Crypto.Cipher import AES
-from Crypto.Signature import PKCS1_OAEP
+from Crypto.Cipher import PKCS1_OAEP
 from Crypto.Signature import PKCS1_PSS
 from Crypto.Hash import SHA
 from Crypto.PublicKey import RSA
@@ -11,6 +11,7 @@ from Crypto import Random
 from base64 import b64encode
 from Crypto.Signature import PKCS1_PSS
 from Crypto.Hash import SHA
+import json
 
 TYPE_KEY = 1
 TYPE_MESSAGE = 2
