@@ -148,7 +148,7 @@ class Conversation:
 
 
     def check_signature(content, sender):
-        
+
 
     def process_incoming_message(self, msg_raw, msg_id, owner_str):
         '''
@@ -167,12 +167,15 @@ class Conversation:
 
         msg_type, sender, receiver, content, signature = self.unformat_message(decoded_msg)
 
+        if receiver != self.manager.user_name and receiver != ALL:
+            return
+
+        if not self.check_signature(content, sender, signature):
+            return
 
         if msg_type == TYPE_KEY:
-            if receiver == self.manager.user_name:
-                if checkSignature(content, sender): 
-
-            pass
+            cipher = PKCS1_OAEP.new(self.manager.RSA_private)
+            self.secret_key = cipher.decrypt(message)
         else:
             iv = decoded_msg[0:AES.block_size]
             enc_msg = decoded_msg[AES.block_size:]
