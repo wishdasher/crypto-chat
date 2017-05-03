@@ -37,6 +37,8 @@ class ChatManager:
         self.user_name = user_name  # user name of the current user
         self.password = password  # password of the current user
         self.get_msgs_thread_started = False  # message retrieval has not been started
+        self.conversations = {} # conversations that the user has entered in this session
+        self.convo_keys = {} # store keys for entered conversations in this session
 
     def login_user(self):
         '''
@@ -335,8 +337,14 @@ class ChatManager:
                         except ValueError as e:
                             print "Entered conversation ID is not a number"
                             continue
-                        self.current_conversation = Conversation(c_id, self)
-                        self.current_conversation.setup_conversation()
+                        if c_id not in self.conversations.keys():
+                            self.current_conversation = Conversation(c_id, self)
+                            self.conversations[c_id] = self.current_conversation
+                            self.current_conversation.setup_conversation()
+                            # TODO store key here
+                        else:
+                            self.current_conversation = self.conversations[c_id]
+                            # TODO pass key to do something useful
                     except urllib2.HTTPError as e:
                         print "Unable to determine validity of conversation ID, server returned HTTP", e.code, e.msg
                         continue
