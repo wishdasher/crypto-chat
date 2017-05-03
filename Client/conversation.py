@@ -129,23 +129,31 @@ class Conversation:
 
         # self.secret_key = Random
 
+        # self.manager.post_message_to_conversation("hello")
+
+        print "setting up convo..."
+
         self.secret_key = b'abcdef01234567890123456789abcdef'
 
         users = self.manager.get_other_users()
 
+        print "user list acquired. Acquiring public keys..."
 
         RSA_public_keys = open('users_public_RSA.json', 'rb')
         publicRSAs = json.load(RSA_public_keys)
         RSA_public_keys.close()
 
         for u in users:
+
             pubkey = RSA.importKey(publicRSAs[u])
             cipher = PKCS1_OAEP.new(pubkey)
             key    = RSA.importKey(publicRSAs[u])
             msg    = cipher.encrypt(self.secret_key)
             msg    = self.format_and_sign_message(TYPE_KEY, self.manager.user_name.encode('utf-8'), u.encode('utf-8'), msg)
-            self.manager.post_message_to_conversation(base64.encodestring(msg))
+            
+            self.manager.post_message_to_conversation(base64.encodestring(msg), True)
 
+        print "Key sent to other users."
     def enter_conversation(self):
         '''
         Called by everyone when they enter the conversation
@@ -165,10 +173,10 @@ class Conversation:
         h.update(content)
 
         key_file = open('users_public_RSA.json', 'rb')
-        public_keys = json.load(keyFile)
+        public_keys = json.load(key_file)
         key_file.close()
 
-        p_key = RSA.importKey(publicKeys[sender])
+        p_key = RSA.importKey(public_keys[sender])
         verifier = PCKS1_PSS.new(p_key)
 
         return verifier.verify(h, signature)
@@ -221,7 +229,6 @@ class Conversation:
         :param msg_raw: raw message
         :return: message to be sent to the server
         '''
-
         msg_padded = pad_TLS(AES.block_size, msg_raw)
         iv = Random.new().read(AES.block_size)
         cipher = AES.new(self.secret_key, AES.MODE_CBC, iv)

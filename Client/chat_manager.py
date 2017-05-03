@@ -260,13 +260,17 @@ class ChatManager:
                 has_requested_messages = True
             sleep(MSG_QUERY_INTERVAL) # Query for new messages every X seconds
 
-    def post_message_to_conversation(self, msg_raw):
+    def post_message_to_conversation(self, msg_raw, key_setup = False):
         '''
         Posts a single message to the current conversation on the server
         :param msg_raw: the raw message to be sent
         :return: None
         '''
         global has_requested_messages
+
+        if key_setup : 
+            has_requested_messages = True
+
         # While the conversation history is being retrieved, postpone message sending
         while has_requested_messages is not True:
             sleep(0.01)
@@ -275,6 +279,7 @@ class ChatManager:
             msg = Message(content=base64.encodestring(msg_raw),
                           owner_name=self.user_name)
             # Send the message
+
             req = urllib2.Request("http://" + SERVER + ":" + SERVER_PORT + "/conversations/" +
                                   str(self.current_conversation.get_id()),
                                   data=json.dumps(msg, cls=MessageEncoder))
