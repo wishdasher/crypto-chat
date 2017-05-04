@@ -46,6 +46,9 @@ class Conversation:
         self.msg_process_loop_started = True
         self.KEY = b'0123456789abcdef0123456789abcdef' # default key
         self.secret_key = self.KEY # initial value for conversation key, to be set by conversation starter
+        self.receive_counters = {}
+
+
 
     def append_msg_to_process(self, msg_json):
         '''
@@ -153,6 +156,16 @@ class Conversation:
         '''
         Called by everyone when they enter the conversation
         '''
+        # initialize counter list
+        print "* Entering conversation..."
+        users = self.manager.get_other_users()
+        for u in (users + [self.manager.user_name]):
+            self.receive_counters[u.encode('utf-8')] = 0
+
+
+        self.send_counter = 0
+
+        print "* Joined conversation."
         pass
 
 
@@ -163,9 +176,10 @@ class Conversation:
         :param signature: signature to verify
         :return: bool
         '''
-
         h = SHA.new()
         h.update(content)
+
+        h.update(str(self.receive_counters[sender] + 1))
 
         key_file = open('users_public_RSA.json', 'rb')
         public_keys = json.load(key_file)
@@ -174,7 +188,11 @@ class Conversation:
         p_key = RSA.importKey(public_keys[sender])
         verifier = PKCS1_PSS.new(p_key)
 
-        return verifier.verify(h, signature)
+        if verifier.verify(h, signature):
+            self.receive_counters[sender] += 1
+            return True
+
+        return False
 
     def process_incoming_message(self, msg_raw, msg_id, owner_str):
         '''
@@ -194,10 +212,12 @@ class Conversation:
         msg_type, sender, receiver, content, signature = self.unformat_message(decoded_msg)
 
         if receiver != self.manager.user_name.encode('utf-8') and receiver != ALL:
+            # still need to update msg counters
+            ignore = self.check_signature(content, sender, signature)
             return
 
         if not self.check_signature(content, sender, signature):
-            print "Signature not valid"
+            print "* ERROR: Message signature not valid."
             return
 
         if msg_type == TYPE_KEY:
@@ -291,6 +311,10 @@ class Conversation:
     def format_and_sign_message(self, msg_type, sender, receiver, content):
         h = SHA.new()
         h.update(content)
+
+        self.send_counter += 1
+        h.update(str(self.send_counter))
+
         key = RSA.importKey(self.manager.RSA_private)
         signer = PKCS1_PSS.new(key)
         signature = signer.sign(h)
