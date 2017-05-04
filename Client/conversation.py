@@ -18,6 +18,7 @@ TYPE_MESSAGE = 2
 NAME_LEN = 32
 SIG_LEN = 128
 ALL = "A"
+KEY_SIZE = 32
 
 class Conversation:
     '''
@@ -43,8 +44,8 @@ class Conversation:
         ) # message processing loop
         self.msg_process_loop.start()
         self.msg_process_loop_started = True
-        self.KEY = b'0123456789abcdef0123456789abcdef'
-        self.secret_key = self.KEY
+        self.KEY = b'0123456789abcdef0123456789abcdef' # default key
+        self.secret_key = self.KEY # initial value for conversation key, to be set by conversation starter
 
     def append_msg_to_process(self, msg_json):
         '''
@@ -127,13 +128,9 @@ class Conversation:
         # replace this with anything needed for your key exchange
 
 
-        # self.secret_key = Random
-
-        # self.manager.post_message_to_conversation("hello")
-
         print "* Generating key..."
 
-        self.secret_key = b'abcdef01234567890123456789abcdef'
+        self.secret_key = Random.new().read(KEY_SIZE)
 
         users = self.manager.get_other_users()
 
@@ -141,7 +138,7 @@ class Conversation:
         public_RSAs = json.load(RSA_public_keys)
         RSA_public_keys.close()
 
-        for u in users:
+        for u in (users + [self.manager.user_name]):
 
             pubkey = RSA.importKey(public_RSAs[u])
             cipher = PKCS1_OAEP.new(pubkey)
