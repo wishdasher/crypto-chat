@@ -342,7 +342,7 @@ class ChatManager:
                     if new_id != -1:
                         state = SELECT_CONVERSATION
                     # Conversation not created, go back to initial state
-                    else
+                    else:
                         state = INIT
                 elif state == SELECT_CONVERSATION:
                     # User wants to enter a conversation
