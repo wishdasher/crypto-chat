@@ -13,7 +13,7 @@ import base64
 
 
 state = INIT  # initial state for the application
-new_id = -1
+new_id = 0
 has_requested_messages = False  # history of the next conversation will need to be downloaded and printed
 
 
@@ -339,7 +339,7 @@ class ChatManager:
                     # User wants to create a conversation
                     self.create_conversation()
                     # Creation finished, join it
-                    if new_id != -1:
+                    if new_id:
                         state = SELECT_CONVERSATION
                     # Conversation not created, go back to initial state
                     else:
@@ -348,7 +348,7 @@ class ChatManager:
                     # User wants to enter a conversation
                     c_id = None
                     try:
-                        if new_id != -1:
+                        if new_id:
                             conversation_id = str(new_id)
                         else:
                             # Read the conversation ID supplied by the user
@@ -368,9 +368,8 @@ class ChatManager:
                             self.current_conversation = Conversation(c_id, self)
                             self.conversations[c_id] = self.current_conversation
                             self.current_conversation.enter_conversation()
-                            if new_id != -1:
+                            if new_id:
                                 self.current_conversation.setup_conversation()
-                            
                         else:
                             self.current_conversation = self.conversations[c_id]
                     except urllib2.HTTPError as e:
@@ -386,7 +385,7 @@ class ChatManager:
                         continue
                     # Enter the conversation (message retrieval thread becomes active)
                     state = IN_CONVERSATION
-                    new_id = -1 # reset the new_id
+                    new_id = 0 # reset the new_id
                     # Read messages from the console
                     self.read_user_input()
                 elif state == STOP:

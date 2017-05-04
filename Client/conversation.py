@@ -162,10 +162,9 @@ class Conversation:
         for u in (users + [self.manager.user_name]):
             self.receive_counters[u.encode('utf-8')] = 0
 
-
         self.send_counter = 0
 
-        print "* Joined conversation."
+        print "* Entered conversation."
         pass
 
 
@@ -213,7 +212,7 @@ class Conversation:
 
         if receiver != self.manager.user_name.encode('utf-8') and receiver != ALL:
             # still need to update msg counters
-            ignore = self.check_signature(content, sender, signature)
+            self.check_signature(content, sender, signature)
             return
 
         if not self.check_signature(content, sender, signature):
