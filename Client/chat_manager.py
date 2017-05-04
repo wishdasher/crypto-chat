@@ -338,8 +338,12 @@ class ChatManager:
                 if state == CREATE_CONVERSATION:
                     # User wants to create a conversation
                     self.create_conversation()
-                    # Creation finished, go back to the initial state
-                    state = SELECT_CONVERSATION
+                    # Creation finished, join it
+                    if new_id != -1:
+                        state = SELECT_CONVERSATION
+                    # Conversation not created, go back to initial state
+                    else
+                        state = INIT
                 elif state == SELECT_CONVERSATION:
                     # User wants to enter a conversation
                     c_id = None
