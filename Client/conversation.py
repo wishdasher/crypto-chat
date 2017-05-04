@@ -289,6 +289,13 @@ class Conversation:
 
 
     def format_and_sign_message(self, msg_type, sender, receiver, content):
+        '''
+        param msg_type: the message type
+        param sender: sender of the message
+        param receiver: intended receiver, ALL for anyone
+        param content: content to be sent
+        return: concatenation of parameters, with padding, formatting, and signature
+        '''
         h = SHA.new()
         h.update(content)
         key = RSA.importKey(self.manager.RSA_private)
@@ -298,6 +305,9 @@ class Conversation:
         return message
 
     def unformat_message(self, message):
+        '''
+        return: the original message type, sender, receiver, content, and signature of the message received
+        '''
         msg_type = int(message[0:1])
         sender = depad_TLS(message[1:NAME_LEN+1])
         receiver = depad_TLS(message[NAME_LEN+1:NAME_LEN*2+1])
