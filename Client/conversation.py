@@ -178,7 +178,10 @@ class Conversation:
         h = SHA.new()
         h.update(content)
 
-        h.update(str(self.receive_counters[sender] + 1))
+        try:
+            h.update(str(self.receive_counters[sender] + 1))
+        except:
+            return
 
         key_file = open('users_public_RSA.json', 'rb')
         public_keys = json.load(key_file)
@@ -188,7 +191,10 @@ class Conversation:
         verifier = PKCS1_PSS.new(p_key)
 
         if verifier.verify(h, signature):
-            self.receive_counters[sender] += 1
+            try:
+                self.receive_counters[sender] += 1
+            except:
+                return False
             return True
 
         return False

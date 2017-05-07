@@ -189,6 +189,7 @@ class ChatManager:
                         if participant != self.user_name:
                             participants.append(participant)
                     return participants
+            return []
 
         else:
             print "Please log in before accessing Your conversations"
