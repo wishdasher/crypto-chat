@@ -217,7 +217,7 @@ class Conversation:
 
         try:
             msg_type, sender, receiver, content, signature = self.unformat_message(decoded_msg)
-        except: 
+        except:
             return
 
         if receiver != self.manager.user_name.encode('utf-8') and receiver != ALL:
