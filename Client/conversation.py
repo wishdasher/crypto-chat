@@ -212,9 +212,13 @@ class Conversation:
 
         # process message here
 		# example is base64 decoding, extend this with any crypto processing of your protocol
+
         decoded_msg = base64.decodestring(msg_raw)
 
-        msg_type, sender, receiver, content, signature = self.unformat_message(decoded_msg)
+        try:
+            msg_type, sender, receiver, content, signature = self.unformat_message(decoded_msg)
+        except: 
+            return
 
         if receiver != self.manager.user_name.encode('utf-8') and receiver != ALL:
             # still need to update msg counters
@@ -222,7 +226,6 @@ class Conversation:
             return
 
         if not self.check_signature(content, sender, signature):
-            print "* ERROR: Message signature not valid."
             return
 
         if msg_type == TYPE_KEY:
@@ -343,6 +346,7 @@ class Conversation:
         content = message[NAME_LEN*2+1:len(message)-SIG_LEN]
         signature = message[len(message)-SIG_LEN:]
         return (msg_type, sender, receiver, content, signature)
+
 
 
 def pad_TLS(length, raw):
